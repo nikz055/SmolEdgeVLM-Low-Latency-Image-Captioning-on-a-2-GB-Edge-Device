@@ -1,0 +1,80 @@
+{
+  "setup": "Tesla T4, float32, batch 1, 500 held-out COCO val2014 images, 3 seeds (connector and R retrained per seed), greedy decoding, max 24 new tokens",
+  "pipelines": {
+    "full_encoder": {
+      "ttft_median_ms": 113.2,
+      "cider_d_mean": 0.7914011042603645,
+      "cider_d_sd": 0.06522145060955027,
+      "clipscore_mean": 68.98030637105306,
+      "clipscore_sd": 1.6054658620324136
+    },
+    "merge_without_R": {
+      "ttft_median_ms": 71.3,
+      "cider_d_mean": 0.6144592645165922,
+      "cider_d_sd": 0.014057586566184846,
+      "clipscore_mean": 64.87073297246297,
+      "clipscore_sd": 0.4924195241114313
+    },
+    "smoledgevlm": {
+      "ttft_median_ms": 71.7,
+      "cider_d_mean": 0.7859439133249667,
+      "cider_d_sd": 0.027527969382940328,
+      "clipscore_mean": 69.32553566233317,
+      "clipscore_sd": 0.48580999170390665
+    }
+  },
+  "paired_bootstrap_95ci": {
+    "smoledgevlm_minus_full_encoder": {
+      "cider_d": {
+        "mean_difference": -0.005457190935397772,
+        "ci95": [
+          -0.03178868160796486,
+          0.023693291700906942
+        ],
+        "verdict": "no significant difference"
+      },
+      "clipscore": {
+        "mean_difference": 0.3452292912801108,
+        "ci95": [
+          -0.04360206985473565,
+          0.7441663424173988
+        ],
+        "verdict": "no significant difference"
+      },
+      "dev_caption_loss": {
+        "mean_difference": -0.009127825366126167,
+        "ci95": [
+          -0.022108943154414498,
+          0.00434405665596324
+        ],
+        "verdict": "no significant difference"
+      }
+    },
+    "smoledgevlm_minus_merge_without_R": {
+      "cider_d": {
+        "mean_difference": 0.1714846488083746,
+        "ci95": [
+          0.1389030645855587,
+          0.2036985853514569
+        ],
+        "verdict": "SmolEdgeVLM better"
+      },
+      "clipscore": {
+        "mean_difference": 4.454802689870199,
+        "ci95": [
+          3.8950024439493816,
+          5.074363300355277
+        ],
+        "verdict": "SmolEdgeVLM better"
+      },
+      "dev_caption_loss": {
+        "mean_difference": -0.14641261061032612,
+        "ci95": [
+          -0.16863867126570806,
+          -0.12554690157704884
+        ],
+        "verdict": "SmolEdgeVLM better"
+      }
+    }
+  }
+}

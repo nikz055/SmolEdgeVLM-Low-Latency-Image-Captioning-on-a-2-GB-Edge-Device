@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.npy
+*.npz
+jetson_package/
+results/eval*.json
+.ipynb_checkpoints/
+.venv/
+*.log
+.pytest_cache/

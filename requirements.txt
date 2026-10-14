@@ -1,0 +1,5 @@
+torch>=1.12
+transformers>=4.40
+numpy
+pillow
+pytest

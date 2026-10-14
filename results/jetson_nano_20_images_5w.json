@@ -1,0 +1,31 @@
+{
+ "device": "cuda",
+ "dtype": "float16",
+ "torch": "1.10.0",
+ "images": 20,
+ "runs": 3,
+ "max_new": 24,
+ "available_mb_before_load": 1596.5546875,
+ "process_peak_mb": 1669.3671875,
+ "modes": {
+  "full": {
+   "ttft_median_ms": 3795.4640385000857,
+   "ttft_p95_ms": 3814.8811799999294,
+   "total_median_ms": 7149.095754999962,
+   "total_p95_ms": 9427.16559900009,
+   "gpu_peak_mb": 563.13232421875,
+   "reference_match": "20/20"
+  },
+  "smoledgevlm": {
+   "ttft_median_ms": 2209.451493000074,
+   "ttft_p95_ms": 2235.352667000143,
+   "total_median_ms": 5567.676729000027,
+   "total_p95_ms": 7157.637693999959,
+   "gpu_peak_mb": 563.13232421875,
+   "reference_match": "19/20"
+  }
+ },
+ "ttft_change_pct": -41.787052371250546,
+ "total_change_pct": -22.120546152902154,
+ "note": "Jetson Nano 2 GB, 5 W, float16, 20 COCO test images, 3 runs each (median)."
+}

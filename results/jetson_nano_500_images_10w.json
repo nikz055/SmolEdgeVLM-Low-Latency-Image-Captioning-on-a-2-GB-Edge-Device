@@ -1,0 +1,100 @@
+{
+ "device": "cuda",
+ "dtype": "float16",
+ "torch": "1.10.0",
+ "power_mode": "pmode:0000 fmode:fanNull",
+ "max_new": 40,
+ "images": 500,
+ "timing_images": 100,
+ "runs": 3,
+ "process_peak_mb": 1577.265625,
+ "modes": {
+  "full": {
+   "ttft_median_ms": 2524.3999999999996,
+   "ttft_p95_ms": 2538.3,
+   "total_median_ms": 4513.0,
+   "tokens_mean": 10.714,
+   "captions": 500,
+   "reference_match": "19/20"
+  },
+  "smoledgevlm": {
+   "ttft_median_ms": 1457.9,
+   "ttft_p95_ms": 1467.7,
+   "total_median_ms": 3357.55,
+   "tokens_mean": 10.736,
+   "captions": 500,
+   "reference_match": "19/20"
+  }
+ },
+ "stages_ms_median": {
+  "full": {
+   "embed": 8.9,
+   "layers_1_3": 440.18,
+   "layers_4_12": 1324.9850000000001,
+   "post_norm": 2.45,
+   "connector": 6.28,
+   "prefill": 743.865,
+   "ttft_staged": 2525.85,
+   "decode_ms_per_token": 177.05
+  },
+  "smoledgevlm": {
+   "embed": 8.87,
+   "layers_1_3": 440.46000000000004,
+   "merge": 7.765,
+   "restore": 2.11,
+   "layers_4_12": 251.14,
+   "post_norm": 1.57,
+   "connector": 5.9,
+   "prefill": 743.765,
+   "ttft_staged": 1461.4,
+   "decode_ms_per_token": 177.14999999999998
+  }
+ },
+ "sustained": {
+  "smoledgevlm": {
+   "captions": 87,
+   "minutes": 5.033095475037893,
+   "captions_per_min": 17.285585070159037,
+   "ttft_ms_median": 1464.7,
+   "total_ms_median": 3318.9,
+   "ttft_ms_first_fifth": 1465.8,
+   "ttft_ms_last_fifth": 1463.5,
+   "power_w_mean": null,
+   "temp_c_max": 80.0,
+   "energy_j_per_caption": null
+  },
+  "full": {
+   "captions": 63,
+   "minutes": 5.0440712690353395,
+   "captions_per_min": 12.489910756564017,
+   "ttft_ms_median": 2534.9,
+   "total_ms_median": 4441.3,
+   "ttft_ms_first_fifth": 2531.75,
+   "ttft_ms_last_fifth": 2536.7,
+   "power_w_mean": null,
+   "temp_c_max": 81.5,
+   "energy_j_per_caption": null
+  }
+ },
+ "idle_power_w": null,
+ "idle_temp_c_max": 76.5,
+ "ttft_change_pct": -42.24766281096497,
+ "total_change_pct": -25.602703301573225,
+ "note": "Jetson Nano 2 GB, JetPack 4.6.1, PyTorch 1.10, float16, batch 1, 10 W. All 500 images timed; the first 100 three times (median) with a timer between every stage. temp_c_max is the hottest board zone (AO).",
+ "board_ram_used_mb_sustained_median": {
+  "full": 1915,
+  "smoledgevlm": 1912
+ },
+ "cider_d_on_device": {
+  "full": 0.848,
+  "smoledgevlm": 0.789
+ },
+ "cider_d_t4_seed0": {
+  "full": 0.854,
+  "smoledgevlm": 0.792
+ },
+ "captions_identical_to_t4": {
+  "full": "466/500",
+  "smoledgevlm": "436/500"
+ }
+}

@@ -1,0 +1,168 @@
+{
+ "config": {
+  "repo": "HuggingFaceTB/SmolVLM-256M-Instruct",
+  "prompt": "Describe this image in one sentence.",
+  "max_new": 40,
+  "size": 512,
+  "n_dev": 300,
+  "n_test": 500,
+  "n_boot": 2000,
+  "clip_id": "openai/clip-vit-base-patch32",
+  "n_r": 1000,
+  "r_offset": 5000,
+  "r_lr": 0.001,
+  "r_bs": 8,
+  "seed": 0,
+  "n_time": 50,
+  "time_runs": 3
+ },
+ "transformers": "4.57.0",
+ "R_diag": {
+  "noR": 0.6540114104747772,
+  "R": 0.7618064016103745
+ },
+ "timing": {
+  "tiled": {
+   "visual_tokens": 832,
+   "tiles": 13,
+   "off": {
+    "vision_ms": 1155.6300074998944,
+    "ttft_ms": 1301.2784184998054,
+    "ttft_p95_ms": 1743.6198006000723
+   },
+   "fm": {
+    "vision_ms": 438.52858500076763,
+    "ttft_ms": 579.3657894996613,
+    "ttft_p95_ms": 799.6798885500084
+   },
+   "vision_change_pct": -62.05285583147098,
+   "ttft_change_pct": -55.4771844931087
+  },
+  "single": {
+   "visual_tokens": 64,
+   "tiles": 1,
+   "off": {
+    "vision_ms": 77.72751049969884,
+    "ttft_ms": 129.72763700054202,
+    "ttft_p95_ms": 133.27032080023855
+   },
+   "fm": {
+    "vision_ms": 27.65488249997361,
+    "ttft_ms": 71.76246400013042,
+    "ttft_p95_ms": 73.50820154988469
+   },
+   "vision_change_pct": -64.4207278450263,
+   "ttft_change_pct": -44.68220831014552
+  }
+ },
+ "scores": {
+  "tiled/off": {
+   "cider": 0.1884553599805629,
+   "clip": 68.79945514678955,
+   "words": 20.53,
+   "cap_hit": 0.182
+  },
+  "tiled/fm": {
+   "cider": 0.25550519328167404,
+   "clip": 67.32659104919433,
+   "words": 15.48,
+   "cap_hit": 0.056
+  },
+  "single/off": {
+   "cider": 0.30362071126672946,
+   "clip": 67.37374313354492,
+   "words": 15.792,
+   "cap_hit": 0.032
+  },
+  "single/fm": {
+   "cider": 0.26834459183738374,
+   "clip": 64.50475772857666,
+   "words": 12.668,
+   "cap_hit": 0.006
+  },
+  "single/fm_noR": {
+   "cider": 0.17780837524822396,
+   "clip": 60.01400323486328,
+   "words": 12.39,
+   "cap_hit": 0.002
+  }
+ },
+ "paired": {
+  "tiled/fm minus tiled/off CIDEr-D": {
+   "diff": 0.06704983330111114,
+   "ci": [
+    0.041719214480088404,
+    0.09196380468698526
+   ],
+   "verdict": "higher"
+  },
+  "tiled/fm minus tiled/off CLIPScore": {
+   "diff": -1.4728640975952147,
+   "ci": [
+    -2.1662823974609373,
+    -0.8021460098266603
+   ],
+   "verdict": "lower"
+  },
+  "single/fm minus single/off CIDEr-D": {
+   "diff": -0.03527611942934572,
+   "ci": [
+    -0.06463035731280752,
+    -0.00727310293667634
+   ],
+   "verdict": "lower"
+  },
+  "single/fm minus single/off CLIPScore": {
+   "diff": -2.868985404968262,
+   "ci": [
+    -3.5792413553237914,
+    -2.137629864501953
+   ],
+   "verdict": "lower"
+  },
+  "single/fm_noR minus single/off CIDEr-D": {
+   "diff": -0.12581233601850547,
+   "ci": [
+    -0.1590290809386655,
+    -0.09261545230005365
+   ],
+   "verdict": "lower"
+  },
+  "single/fm_noR minus single/off CLIPScore": {
+   "diff": -7.3597398986816405,
+   "ci": [
+    -8.204427759170533,
+    -6.49258169746399
+   ],
+   "verdict": "lower"
+  },
+  "single/fm minus single/fm_noR CIDEr-D": {
+   "diff": 0.09053621658915978,
+   "ci": [
+    0.059759837647226303,
+    0.12049778356518
+   ],
+   "verdict": "higher"
+  },
+  "single/fm minus single/fm_noR CLIPScore": {
+   "diff": 4.4907544937133785,
+   "ci": [
+    3.601658298110962,
+    5.323574703788757
+   ],
+   "verdict": "higher"
+  }
+ },
+ "note": "SmolVLM-256M-Instruct with only the step between vision layers 3 and 4 replaced (merge, R retrained on its own encoder, log n bias, unmerge). Tesla T4, float32, eager attention in both arms, one seed. Timing on the first 50 test images (median of 3); scores on all 500. \"single\" = one 512 x 512 view, \"tiled\" = 13 views.",
+ "jetson_nano_2gb_single_image": {
+  "images": 100,
+  "ttft_original_ms": 2096,
+  "ttft_smoledgevlm_ms": 1022,
+  "vision_original_ms": 1778,
+  "vision_smoledgevlm_ms": 712,
+  "whole_caption_original_ms": 4927,
+  "whole_caption_smoledgevlm_ms": 3561,
+  "lower_ttft_on": "100/100",
+  "captions_identical_to_t4": "91/100"
+ }
+}

@@ -1,0 +1,34 @@
+[
+ {
+  "full_encoder": "A person skis down a slope.",
+  "smoledgevlm": "People are skiing down a slope."
+ },
+ {
+  "full_encoder": "A man riding a skateboard down a street.",
+  "smoledgevlm": "A man with a skateboard on a street."
+ },
+ {
+  "full_encoder": "Two birds are standing in a lake.",
+  "smoledgevlm": "Two birds are standing on a rock."
+ },
+ {
+  "full_encoder": "A man standing in the middle of a forest with a giraffe in his arms.",
+  "smoledgevlm": "A giraffe standing in a forest."
+ },
+ {
+  "full_encoder": "A kitchen with a refrigerator and a microwave.",
+  "smoledgevlm": "A kitchen with a kitchen stove and a refrigerator."
+ },
+ {
+  "full_encoder": "A bear standing in a field with a black bear.",
+  "smoledgevlm": "A bear standing on a hill."
+ },
+ {
+  "full_encoder": "A man riding a motorcycle on a street.",
+  "smoledgevlm": "A man riding a motorcycle on a street."
+ },
+ {
+  "full_encoder": "A group of people standing on snow covered snow covered snow covered\u2026",
+  "smoledgevlm": "A group of people walking down a snowy road."
+ }
+]

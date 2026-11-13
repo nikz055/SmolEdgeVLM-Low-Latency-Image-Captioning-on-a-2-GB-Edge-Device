@@ -38,6 +38,25 @@ python3 benchmark.py --images images_test500 --resume       # continue after an 
 `benchmark.py` writes `per_image.csv`, `stages.csv`, `sustained.csv`, `sensors.csv`, `tegrastats.log` and
 `summary.json`, and ends with a result block like the one in `docs/media/jetson_result.png`.
 
+### Live camera test
+
+`live_caption.py` captions what a USB or CSI camera sees (or a folder of photos), prints the timing of each caption,
+saves every frame, and can ask for a rating after each caption (`c` correct, `p` partly correct, `w` wrong, add `h` if
+it names something that is not there).
+
+```bash
+python3 live_caption.py --weights smoledgevlm_jetson_weights.npz --meta smoledgevlm_jetson_meta.json --camera usb --rate --out live
+python3 live_caption.py --weights smoledgevlm_jetson_weights.npz --meta smoledgevlm_jetson_meta.json --camera usb --every 5 --count 20 --out demo
+```
+
+Output: `frames/`, `live_log.csv` and `live_summary.json`.
+
+### Version 2 package
+
+`notebooks/retrain_v2_kaggle.ipynb` writes a board package (`smoledgevlm_v2_lora_weights.npz`, `smoledgevlm_v2_meta.json`)
+that `smoledgevlm_jetson.py`, `benchmark.py` and `live_caption.py` load directly with `--weights` and `--meta`. In that
+package only the merged path is retrained; its full-encoder path still uses the original connector.
+
 To record a run for a video: `script -t 2>timing.log output.log`, run the benchmark, `exit`, then replay with
 `scriptreplay timing.log output.log 20` (20× speed).
 

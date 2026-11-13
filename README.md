@@ -4,6 +4,8 @@ SmolEdgeVLM cuts the time a small vision-language model takes to start captionin
 **inside a frozen vision encoder**, then repairing the merged features with a tiny module trained without captions.
 It runs on a **Jetson Nano 2 GB**.
 
+**Project page:** https://nikz055.github.io/SmolEdgeVLM-Low-Latency-Image-Captioning-on-a-2-GB-Edge-Device/
+
 | Headline result | Full encoder | SmolEdgeVLM | Change |
 |---|---|---|---|
 | Time to first token, Jetson Nano 2 GB (10 W, 500 images) | 2.52 s | **1.46 s** | **−42%** |
@@ -176,6 +178,36 @@ wait when it runs 13 times; in absolute time a single image is still far faster.
 SmolEdgeVLM has the lowest time to first token here. CIDEr-D favours our COCO-style short captions, and the larger
 models score higher on CLIPScore, so this is a latency comparison, not a claim of better captions.
 
+### Version 2: retrained on broader data
+
+Only the trained parts (R, the connector and a LoRA adapter merged into SmolLM2) were retrained, on 127,602 images from
+COCO train2014, TextCaps and VizWiz-Captions, with darkened, blurred, noisy and compressed copies in 30% of the steps.
+The encoder, the language model and the merge are unchanged, so the board does the same work per image. One training
+run (seed 0). Notebook: [notebooks/retrain_v2_kaggle.ipynb](notebooks/retrain_v2_kaggle.ipynb).
+
+Tesla T4, board code in float16, 500 unseen images per set, CIDEr with the fair rule (first sentence, stock openings
+removed):
+
+| Test set | Original | v2 | Original + LoRA | v2 + LoRA | v2 + LoRA minus original + LoRA (95% CI) |
+|---|---|---|---|---|---|
+| COCO held-out | 0.788 | 0.975 | 0.935 | **1.082** | +0.15 [+0.10, +0.20] |
+| nocaps validation | 0.418 | 0.615 | 0.496 | **0.688** | +0.19 [+0.15, +0.23] |
+| TextCaps validation | 0.161 | 0.351 | 0.223 | **0.402** | +0.18 [+0.15, +0.21] |
+
+Jetson Nano 2 GB, the same 100 COCO images every compared model was run on (10 W, greedy, 40-token cap):
+
+| Model | Weights | TTFT | Caption | BLEU-4 | METEOR | ROUGE-L | CIDEr |
+|---|---|---|---|---|---|---|---|
+| **SmolEdgeVLM v2 + LoRA** | 16-bit | **1.50 s** | **3.62 s** | **0.326** | 0.263 | **0.566** | **1.183** |
+| SmolEdgeVLM + LoRA (original) | 16-bit | 1.46 s | 3.50 s | 0.277 | 0.251 | 0.535 | 1.011 |
+| LFM2-VL-450M | 8-bit | 3.35 s | 12.20 s | 0.296 | **0.295** | 0.563 | 1.158 |
+| SmolVLM-500M | 8-bit | 3.28 s | 15.59 s | 0.234 | 0.249 | 0.500 | 0.896 |
+
+v2 + LoRA against LFM2-VL-450M: +0.03 CIDEr [−0.10, +0.15], a tie, at 2.2 times less time to first token and 3.4 times
+less caption time. Against the original + LoRA: +0.17 [+0.06, +0.30]. COCO train is now part of the training data, so
+nocaps is the fairer quality test. Raw files: [results/v2/](results/v2/). Score a new board run with
+`scripts/score_board.py`.
+
 ### Limitations
 
 - Memory is not reduced (same weights plus 0.30 M for R); the gain is latency.
@@ -195,11 +227,12 @@ smoledgevlm/            the method (PyTorch + transformers)
   losses.py             relMSE restoration loss, caption loss
   metrics.py            CIDEr-D, CLIPScore, paired bootstrap
   data.py               the COCO 2014 splits
-scripts/                train_restoration.py, train_connector.py, evaluate.py, caption.py
-jetson/                 export_for_jetson.py (PC), smoledgevlm_jetson.py and benchmark.py (device)
-weights/                trained R and connectors (7 MB)
-results/                every reported number as JSON
-docs/                   method details and media
+scripts/                train_restoration.py, train_connector.py, evaluate.py, caption.py, score_board.py
+jetson/                 export_for_jetson.py (PC), smoledgevlm_jetson.py, benchmark.py and live_caption.py (device)
+notebooks/              Kaggle notebooks for version 2: retraining, and the full-encoder check
+weights/                trained R and connectors (7 MB); weights/v2/ holds the version 2 R and connector
+results/                every reported number as JSON or CSV; results/v2/ for version 2
+docs/                   project page (index.html), method details and media
 tests/                  unit tests (CPU, no downloads)
 ```
 

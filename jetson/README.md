@@ -8,12 +8,16 @@ so the model runs from a plain-PyTorch re-implementation with exported float16 w
 | `export_for_jetson.py` | PC or Kaggle (with `transformers`) | Packs SigLIP, SmolLM2, R and both connectors into `smoledgevlm_jetson_weights.npz` (float16) and `smoledgevlm_jetson_meta.json` (sizes, prompt ids, tokenizer byte table, optional reference captions) |
 | `smoledgevlm_jetson.py` | Jetson | The model: encoder (full or merged), connector, SmolLM2 with KV cache, greedy decoding. Needs only PyTorch, NumPy and Pillow |
 | `benchmark.py` | Jetson | Timing with a timer between stages, captions for scoring, a sustained run, and sensor logging |
+| `live_caption.py` | Jetson | Captions from a USB or CSI camera, or a folder of photos, with optional ratings |
 
 ## 1. Export (on a PC)
 
 ```bash
 python jetson/export_for_jetson.py --weights-dir weights/v1 --out jetson_package --ref-images my_images --ref-count 10
 ```
+
+The export needs both connectors, so it works with `weights/v1`. For v2, which has no full-encoder connector and adds
+LoRA, use the package that `notebooks/retrain_v2_kaggle.ipynb` writes (see [Version 2 package](#version-2-package)).
 
 ## 2. Prepare the board
 

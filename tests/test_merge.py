@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 from smoledgevlm.merge import TokenMerger, lattice_anchors, size_bias, unmerge  # noqa: E402
 from smoledgevlm.modules import PoolConnector, Restore, load_state  # noqa: E402
 
-WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'weights')
+WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'weights', 'v1')
 
 
 def test_lattice_has_256_anchors_on_even_rows_and_columns():

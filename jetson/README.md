@@ -12,7 +12,7 @@ so the model runs from a plain-PyTorch re-implementation with exported float16 w
 ## 1. Export (on a PC)
 
 ```bash
-python jetson/export_for_jetson.py --weights-dir weights --out jetson_package --ref-images my_images --ref-count 10
+python jetson/export_for_jetson.py --weights-dir weights/v1 --out jetson_package --ref-images my_images --ref-count 10
 ```
 
 ## 2. Prepare the board
@@ -36,7 +36,7 @@ python3 benchmark.py --images images_test500 --resume       # continue after an 
 ```
 
 `benchmark.py` writes `per_image.csv`, `stages.csv`, `sustained.csv`, `sensors.csv`, `tegrastats.log` and
-`summary.json`, and ends with a result block like the one in `docs/media/jetson_result.png`.
+`summary.json`, and ends with a result block like the one in `docs/static/jetson_result.jpg`.
 
 ### Live camera test
 

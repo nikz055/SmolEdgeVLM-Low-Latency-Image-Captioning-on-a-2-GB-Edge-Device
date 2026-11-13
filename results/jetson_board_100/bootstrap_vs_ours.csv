@@ -1,0 +1,16 @@
+model,CIDEr ours minus model,CIDEr result,METEOR ours minus model,METEOR result,ROUGE-L ours minus model,ROUGE-L result
+"Our model, full encoder","-0.041 [-0.135, +0.051]",no clear difference,"-0.007 [-0.021, +0.008]",no clear difference,"-0.013 [-0.041, +0.014]",no clear difference
+SmolVLM-256M,"+0.260 [+0.125, +0.402]",ours higher,"+0.046 [+0.025, +0.067]",ours higher,"+0.069 [+0.035, +0.104]",ours higher
+SmolVLM-256M + our merge,"+0.385 [+0.260, +0.517]",ours higher,"+0.071 [+0.051, +0.092]",ours higher,"+0.112 [+0.077, +0.148]",ours higher
+SmolVLM2-256M,"+0.191 [+0.058, +0.330]",ours higher,"-0.022 [-0.042, -0.003]",model higher,"+0.043 [+0.013, +0.073]",ours higher
+SmolVLM2-256M + our merge,"+0.228 [+0.107, +0.349]",ours higher,"-0.010 [-0.029, +0.009]",no clear difference,"+0.047 [+0.014, +0.079]",ours higher
+SmolVLM-256M (8-bit),"+0.252 [+0.121, +0.387]",ours higher,"+0.050 [+0.029, +0.072]",ours higher,"+0.078 [+0.041, +0.114]",ours higher
+SmolVLM-256M + our merge (8-bit),"+0.352 [+0.234, +0.478]",ours higher,"+0.066 [+0.047, +0.086]",ours higher,"+0.097 [+0.063, +0.132]",ours higher
+SmolVLM-500M (8-bit),"-0.078 [-0.213, +0.056]",no clear difference,"-0.020 [-0.041, +0.001]",no clear difference,"-0.010 [-0.045, +0.024]",no clear difference
+SmolVLM-500M + our merge (8-bit),"-0.004 [-0.130, +0.114]",no clear difference,"-0.000 [-0.023, +0.021]",no clear difference,"+0.024 [-0.009, +0.056]",no clear difference
+SmolVLM2-500M (8-bit),"+0.410 [+0.292, +0.526]",ours higher,"-0.047 [-0.063, -0.030]",model higher,"+0.034 [+0.007, +0.061]",ours higher
+SmolVLM2-500M + our merge (8-bit),"+0.477 [+0.353, +0.600]",ours higher,"-0.031 [-0.049, -0.014]",model higher,"+0.051 [+0.024, +0.077]",ours higher
+LFM2-VL-450M (8-bit),"-0.341 [-0.493, -0.198]",model higher,"-0.080 [-0.109, -0.053]",model higher,"-0.073 [-0.109, -0.038]",model higher
+LFM2.5-VL-450M (8-bit),"-0.041 [-0.181, +0.103]",no clear difference,"-0.068 [-0.088, -0.047]",model higher,"-0.035 [-0.068, -0.003]",model higher
+GIT-base-COCO (captioning specialist),"-0.772 [-0.941, -0.609]",model higher,"-0.119 [-0.156, -0.086]",model higher,"-0.139 [-0.175, -0.104]",model higher
+SmolEdgeVLM + LoRA on COCO,"-0.193 [-0.295, -0.088]",model higher,"-0.027 [-0.043, -0.012]",model higher,"-0.045 [-0.071, -0.019]",model higher

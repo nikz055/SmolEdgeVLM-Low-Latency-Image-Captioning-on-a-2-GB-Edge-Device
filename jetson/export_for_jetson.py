@@ -4,8 +4,8 @@
     smoledgevlm_jetson_meta.json     model sizes, prompt token ids, the tokenizer's byte table and
                                      (optionally) reference captions to check the Jetson output against
 
-    python jetson/export_for_jetson.py --weights-dir weights --out jetson_package
-    python jetson/export_for_jetson.py --weights-dir weights --out jetson_package --ref-images images --ref-count 10
+    python jetson/export_for_jetson.py --weights-dir weights/v1 --out jetson_package
+    python jetson/export_for_jetson.py --weights-dir weights/v1 --out jetson_package --ref-images images --ref-count 10
 """
 import argparse, json, os, sys
 import numpy as np
@@ -169,7 +169,7 @@ def tokenizer_tables(tok, vocab_size):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--weights-dir', default='weights')
+    ap.add_argument('--weights-dir', default='weights/v1')
     ap.add_argument('--out', default='jetson_package')
     ap.add_argument('--ref-images', default='')
     ap.add_argument('--ref-count', type=int, default=10)

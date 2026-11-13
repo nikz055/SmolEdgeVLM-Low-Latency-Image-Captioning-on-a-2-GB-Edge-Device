@@ -1,7 +1,7 @@
 """SmolEdgeVLM: frozen SigLIP-B/16@512 + token merging with restoration + pooling connector + frozen SmolLM2-135M.
 
     from smoledgevlm import SmolEdgeVLM
-    model = SmolEdgeVLM('weights')
+    model = SmolEdgeVLM('weights/v1')
     print(model.caption(Image.open('photo.jpg'))['caption'])
 
 mode='smoledgevlm' runs the proposed encoder (merge after layer 3, R, layers 4-12 on 256 tokens with the log n
@@ -41,7 +41,7 @@ def siglip_pixels(img, size=512):
 class SmolEdgeVLM:
     WEIGHTS = {'restore': 'restore_R.pt', 'smoledgevlm': 'connector_smoledgevlm.pt', 'full': 'connector_full_encoder.pt'}
 
-    def __init__(self, weights_dir='weights', device=None, dtype=torch.float32):
+    def __init__(self, weights_dir='weights/v1', device=None, dtype=torch.float32):
         from transformers import AutoModelForCausalLM, AutoTokenizer, SiglipVisionModel
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self.dtype = dtype

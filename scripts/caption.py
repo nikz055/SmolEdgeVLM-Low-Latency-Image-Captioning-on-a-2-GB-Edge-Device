@@ -14,7 +14,7 @@ from smoledgevlm.model import SmolEdgeVLM
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('image')
-    ap.add_argument('--weights', default='weights')
+    ap.add_argument('--weights', default='weights/v1')
     ap.add_argument('--merge-map', default='')
     a = ap.parse_args()
     model = SmolEdgeVLM(a.weights)

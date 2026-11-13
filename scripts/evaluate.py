@@ -22,7 +22,7 @@ from smoledgevlm.model import SmolEdgeVLM
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--coco', required=True)
-    ap.add_argument('--weights', default='weights')
+    ap.add_argument('--weights', default='weights/v1')
     ap.add_argument('--modes', default='full,smoledgevlm')
     ap.add_argument('--timed', type=int, default=30)
     ap.add_argument('--runs', type=int, default=3)

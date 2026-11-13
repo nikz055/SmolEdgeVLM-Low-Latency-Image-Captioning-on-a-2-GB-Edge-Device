@@ -1,7 +1,7 @@
 # Version 2 weights
 
 `restore_R.pt` and `connector_smoledgevlm.pt` trained on 127,602 images (COCO train2014, TextCaps, VizWiz-Captions),
-in the same format as the files in `weights/`, so the merged path loads with:
+in the same format as the files in `weights/v1/`, so the merged path loads with:
 
 ```python
 from smoledgevlm.model import SmolEdgeVLM

@@ -11,7 +11,8 @@ from collections import defaultdict
 
 
 def load_captions(annotation_file):
-    raw = json.load(open(annotation_file))
+    with open(annotation_file) as fh:
+        raw = json.load(fh)
     refs = defaultdict(list)
     for a in raw['annotations']:
         refs[a['image_id']].append((a['id'], a['caption'].strip()))

@@ -8,12 +8,16 @@ so the model runs from a plain-PyTorch re-implementation with exported float16 w
 | `export_for_jetson.py` | PC or Kaggle (with `transformers`) | Packs SigLIP, SmolLM2, R and both connectors into `smoledgevlm_jetson_weights.npz` (float16) and `smoledgevlm_jetson_meta.json` (sizes, prompt ids, tokenizer byte table, optional reference captions) |
 | `smoledgevlm_jetson.py` | Jetson | The model: encoder (full or merged), connector, SmolLM2 with KV cache, greedy decoding. Needs only PyTorch, NumPy and Pillow |
 | `benchmark.py` | Jetson | Timing with a timer between stages, captions for scoring, a sustained run, and sensor logging |
+| `live_caption.py` | Jetson | Captions from a USB or CSI camera, or a folder of photos, with optional ratings |
 
 ## 1. Export (on a PC)
 
 ```bash
-python jetson/export_for_jetson.py --weights-dir weights --out jetson_package --ref-images my_images --ref-count 10
+python jetson/export_for_jetson.py --weights-dir weights/v1 --out jetson_package --ref-images my_images --ref-count 10
 ```
+
+The export needs both connectors, so it works with `weights/v1`. For v2, which has no full-encoder connector and adds
+LoRA, use the package that `notebooks/retrain_v2_kaggle.ipynb` writes (see [Version 2 package](#version-2-package)).
 
 ## 2. Prepare the board
 
@@ -36,7 +40,26 @@ python3 benchmark.py --images images_test500 --resume       # continue after an 
 ```
 
 `benchmark.py` writes `per_image.csv`, `stages.csv`, `sustained.csv`, `sensors.csv`, `tegrastats.log` and
-`summary.json`, and ends with a result block like the one in `docs/media/jetson_result.png`.
+`summary.json`, and ends with a result block like the one in `docs/static/jetson_result.jpg`.
+
+### Live camera test
+
+`live_caption.py` captions what a USB or CSI camera sees (or a folder of photos), prints the timing of each caption,
+saves every frame, and can ask for a rating after each caption (`c` correct, `p` partly correct, `w` wrong, add `h` if
+it names something that is not there).
+
+```bash
+python3 live_caption.py --weights smoledgevlm_jetson_weights.npz --meta smoledgevlm_jetson_meta.json --camera usb --rate --out live
+python3 live_caption.py --weights smoledgevlm_jetson_weights.npz --meta smoledgevlm_jetson_meta.json --camera usb --every 5 --count 20 --out demo
+```
+
+Output: `frames/`, `live_log.csv` and `live_summary.json`.
+
+### Version 2 package
+
+`notebooks/retrain_v2_kaggle.ipynb` writes a board package (`smoledgevlm_v2_lora_weights.npz`, `smoledgevlm_v2_meta.json`)
+that `smoledgevlm_jetson.py`, `benchmark.py` and `live_caption.py` load directly with `--weights` and `--meta`. In that
+package only the merged path is retrained; its full-encoder path still uses the original connector.
 
 To record a run for a video: `script -t 2>timing.log output.log`, run the benchmark, `exit`, then replay with
 `scriptreplay timing.log output.log 20` (20× speed).

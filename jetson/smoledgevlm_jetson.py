@@ -63,7 +63,10 @@ class SmolEdgeVLMJetson(object):
     def __init__(self, weights, meta_path, device='cuda', dtype=torch.float16):
         self.device, self.dtype = device, dtype
         self.meta, self.W = load_model(weights, meta_path, device, dtype)
-        v, l, fm = self.meta['vision'], self.meta['lm'], self.meta['merge']
+        merge_settings = self.meta.get('merge')
+        if merge_settings is None:
+            merge_settings = self.meta['foremerge']     # key name used by packages from notebooks/retrain_v2_kaggle.ipynb
+        v, l, fm = self.meta['vision'], self.meta['lm'], merge_settings
         self.v, self.l = v, l
         self.k, self.M, self.radius = fm['k'], fm['M'], fm['radius']
         self.grid = v['image_size'] // v['patch']

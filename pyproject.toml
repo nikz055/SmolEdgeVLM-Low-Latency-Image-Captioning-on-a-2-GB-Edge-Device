@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smoledgevlm"
+version = "2.0.0"
+description = "Low-latency image captioning on a 2 GB edge device: token merging inside a frozen SigLIP encoder, repaired by a small label-free restoration module."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Nikhil Rajiv" }]
+requires-python = ">=3.9"
+dependencies = [
+    "torch>=1.12",
+    "transformers>=4.40",
+    "numpy",
+    "pillow",
+]
+
+[project.optional-dependencies]
+eval = ["pycocoevalcap"]          # scripts/score_board.py (also needs Java for METEOR and the PTB tokenizer)
+dev = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://nikz055.github.io/SmolEdgeVLM-Low-Latency-Image-Captioning-on-a-2-GB-Edge-Device/"
+Repository = "https://github.com/nikz055/SmolEdgeVLM-Low-Latency-Image-Captioning-on-a-2-GB-Edge-Device"
+
+[tool.setuptools]
+packages = ["smoledgevlm"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

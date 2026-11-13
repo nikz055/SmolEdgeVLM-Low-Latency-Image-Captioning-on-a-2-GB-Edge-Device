@@ -4,10 +4,11 @@ Reports CIDEr-D and CLIPScore on all 500 images and the time to first token (TTF
 --timed images (warm-up first, GPU-synchronised, pipelines alternated). Paired bootstrap CIs compare each mode
 with the full encoder.
 
-    python scripts/evaluate.py --coco /data/coco2014 --modes full,merge_no_R,smoledgevlm --out results/eval.json
+    python scripts/evaluate.py --coco /data/coco2014 --modes full,merge_no_R,smoledgevlm --out outputs/eval.json
 """
 import argparse
 import json
+import os
 
 import numpy as np
 import torch
@@ -26,7 +27,7 @@ def main():
     ap.add_argument('--modes', default='full,smoledgevlm')
     ap.add_argument('--timed', type=int, default=30)
     ap.add_argument('--runs', type=int, default=3)
-    ap.add_argument('--out', default='results/eval.json')
+    ap.add_argument('--out', default='outputs/eval.json')
     a = ap.parse_args()
     modes = [m.strip() for m in a.modes.split(',')]
 
@@ -67,7 +68,9 @@ def main():
                 res[m]['vs_full'] = {k: paired_bootstrap(per[m][k], per['full'][k]) for k in ('cider', 'clip')}
                 print('%-12s vs full: CIDEr-D %+.4f [%+.4f, %+.4f], CLIPScore %+.2f [%+.2f, %+.2f]'
                       % ((m,) + tuple(res[m]['vs_full']['cider']) + tuple(res[m]['vs_full']['clip'])))
-    json.dump(res, open(a.out, 'w'), indent=2)
+    os.makedirs(os.path.dirname(a.out) or '.', exist_ok=True)
+    with open(a.out, 'w') as fh:
+        json.dump(res, fh, indent=2)
     print('written', a.out)
 
 

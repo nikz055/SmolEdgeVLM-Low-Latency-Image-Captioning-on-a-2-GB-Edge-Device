@@ -4,9 +4,10 @@ The same image goes through the full frozen encoder (target) and through the mer
 (layers 1-3 -> merge -> R -> layers 4-12 -> unmerge). Only R is updated, to make the two outputs match.
 3,000 COCO train images, one pass, batch 8: about 6 minutes on a Tesla T4.
 
-    python scripts/train_restoration.py --coco /data/coco2014 --out weights/restore_R.pt
+    python scripts/train_restoration.py --coco /data/coco2014 --out outputs/restore_R.pt
 """
 import argparse
+import os
 import random
 import time
 
@@ -25,7 +26,7 @@ from smoledgevlm.modules import Restore
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--coco', required=True)
-    ap.add_argument('--out', default='weights/restore_R.pt')
+    ap.add_argument('--out', default='outputs/restore_R.pt')
     ap.add_argument('--lr', type=float, default=1e-3)
     ap.add_argument('--batch', type=int, default=8)
     ap.add_argument('--seed', type=int, default=0)
@@ -58,6 +59,7 @@ def main():
         hist.append(total)
         if s == 0 or (s + 1) % 25 == 0 or s == steps - 1:
             print('step %4d/%d  loss %.4f  (%.0f s)' % (s + 1, steps, np.mean(hist[-20:]), time.time() - t0))
+    os.makedirs(os.path.dirname(a.out) or '.', exist_ok=True)
     torch.save(R.state_dict(), a.out)
     print('saved', a.out)
 

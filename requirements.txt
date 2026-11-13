@@ -1,5 +1,6 @@
+# Runtime (PC or server GPU). Optional extras are in pyproject.toml: pip install -e ".[eval,dev]"
+# The Jetson Nano needs none of these except PyTorch, NumPy and Pillow (see jetson/README.md).
 torch>=1.12
 transformers>=4.40
 numpy
 pillow
-pytest

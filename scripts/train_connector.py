@@ -3,8 +3,10 @@
 The same recipe is used for every pipeline: 5,000 COCO train images (one caption each), 1,500 steps,
 AdamW (lr 1e-3, 40 warm-up steps, cosine decay), batch 16. Encoder features are computed once and cached.
 
-    python scripts/train_connector.py --coco /data/coco2014 --mode smoledgevlm --out weights/connector_smoledgevlm.pt
-    python scripts/train_connector.py --coco /data/coco2014 --mode full        --out weights/connector_full_encoder.pt
+    python scripts/train_connector.py --coco /data/coco2014 --mode smoledgevlm --weights outputs --out outputs/connector_smoledgevlm.pt
+    python scripts/train_connector.py --coco /data/coco2014 --mode full                          --out outputs/connector_full_encoder.pt
+
+--weights is the folder holding restore_R.pt (default: the released weights/v1).
 """
 import argparse
 import os
@@ -41,16 +43,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--coco', required=True)
     ap.add_argument('--mode', choices=['smoledgevlm', 'merge_no_R', 'full'], default='smoledgevlm')
-    ap.add_argument('--weights', default='weights', help='folder with restore_R.pt (for the merged modes)')
+    ap.add_argument('--weights', default='weights/v1', help='folder with restore_R.pt (for the merged modes)')
     ap.add_argument('--out', required=True)
     ap.add_argument('--steps', type=int, default=1500)
     ap.add_argument('--lr', type=float, default=1e-3)
     ap.add_argument('--seed', type=int, default=0)
-    ap.add_argument('--cache', default='features_%s.npy')
+    ap.add_argument('--cache', default='outputs/features_%s.npy')
     a = ap.parse_args()
 
     model = SmolEdgeVLM(weights_dir=a.weights if a.mode == 'smoledgevlm' else None)
     items = coco_splits(a.coco)['connector']
+    os.makedirs(os.path.dirname(a.cache % a.mode) or '.', exist_ok=True)
     feats = cache_features(model, items, a.mode, a.cache % a.mode)
     caps = [r['caption'] for r in items]
 
@@ -81,6 +84,7 @@ def main():
         hist.append(total)
         if step == 0 or (step + 1) % 100 == 0:
             print('step %4d/%d  loss %.4f  (%.0f s)' % (step + 1, a.steps, np.mean(hist[-20:]), time.time() - t0))
+    os.makedirs(os.path.dirname(a.out) or '.', exist_ok=True)
     torch.save(conn.state_dict(), a.out)
     print('saved', a.out)
 

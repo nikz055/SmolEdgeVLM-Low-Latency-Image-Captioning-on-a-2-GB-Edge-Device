@@ -33,10 +33,7 @@ class PoolConnector(nn.Module):
         self.proj = nn.Sequential(nn.Linear(d_vision, d_text), nn.GELU(), nn.Linear(d_text, d_text))
 
     def forward(self, feats):
-        B, n, d = feats.shape
-        s = int(round(n ** 0.5))
-        x = F.adaptive_avg_pool2d(feats.transpose(1, 2).reshape(B, d, s, s), (self.grid, self.grid))
-        return self.proj(x.flatten(2).transpose(1, 2))
+        return self.proj(pool_grid(feats, self.grid))
 
 
 def pool_grid(feats, grid=16):

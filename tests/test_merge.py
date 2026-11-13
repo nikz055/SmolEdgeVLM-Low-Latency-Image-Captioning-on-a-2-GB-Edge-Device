@@ -1,14 +1,13 @@
 """CPU checks of the weight-free merge step and the two trained modules (no model downloads)."""
 import os
-import sys
 
+import pytest
 import torch
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-from smoledgevlm.merge import TokenMerger, lattice_anchors, size_bias, unmerge  # noqa: E402
-from smoledgevlm.modules import PoolConnector, Restore, load_state  # noqa: E402
+from smoledgevlm.merge import TokenMerger, lattice_anchors, size_bias, unmerge
+from smoledgevlm.modules import PoolConnector, Restore, load_state, pool_grid
 
-WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'weights', 'v1')
+WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'weights')
 
 
 def test_lattice_has_256_anchors_on_even_rows_and_columns():
@@ -45,11 +44,24 @@ def test_restore_starts_as_identity_and_has_0_30M_parameters():
     assert sum(p.numel() for p in R.parameters()) == 297408
 
 
-def test_trained_weights_load():
+@pytest.mark.parametrize('version, connectors', [
+    ('v1', ('connector_smoledgevlm.pt', 'connector_full_encoder.pt')),
+    ('v2', ('connector_smoledgevlm.pt',)),                  # version 2 has no full-encoder connector
+])
+def test_trained_weights_load(version, connectors):
     R = Restore(768, 192)
-    R.load_state_dict(load_state(os.path.join(WEIGHTS, 'restore_R.pt')))
-    for name in ('connector_smoledgevlm.pt', 'connector_full_encoder.pt'):
+    R.load_state_dict(load_state(os.path.join(WEIGHTS, version, 'restore_R.pt')))
+    for name in connectors:
         c = PoolConnector(768, 576, 16)
-        c.load_state_dict(load_state(os.path.join(WEIGHTS, name)))
+        c.load_state_dict(load_state(os.path.join(WEIGHTS, version, name)))
         assert c(torch.randn(1, 1024, 768)).shape == (1, 256, 576)
         assert sum(p.numel() for p in c.parameters()) == 775296
+
+
+def test_connector_is_2x2_pooling_then_mlp():
+    torch.manual_seed(0)
+    c = PoolConnector(768, 576, 16)
+    feats = torch.randn(2, 1024, 768)
+    pooled = feats.view(2, 32, 32, 768).unflatten(1, (16, 2)).unflatten(3, (16, 2)).mean((2, 4)).reshape(2, 256, 768)
+    assert torch.allclose(pool_grid(feats), pooled, atol=1e-6)
+    assert torch.allclose(c(feats), c.proj(pooled), atol=1e-6)

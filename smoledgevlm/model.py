@@ -42,11 +42,14 @@ class SmolEdgeVLM:
     WEIGHTS = {'restore': 'restore_R.pt', 'smoledgevlm': 'connector_smoledgevlm.pt', 'full': 'connector_full_encoder.pt'}
 
     def __init__(self, weights_dir='weights/v1', device=None, dtype=torch.float32):
+        import transformers
         from transformers import AutoModelForCausalLM, AutoTokenizer, SiglipVisionModel
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self.dtype = dtype
         self.vision = SiglipVisionModel.from_pretrained(C.VISION_ID).to(self.device, dtype).eval()
-        self.lm = AutoModelForCausalLM.from_pretrained(C.LM_ID, torch_dtype=dtype).to(self.device).eval()
+        major, minor = (int(x) for x in transformers.__version__.split('.')[:2])
+        dtype_arg = 'dtype' if (major, minor) >= (4, 56) else 'torch_dtype'     # renamed in transformers 4.56
+        self.lm = AutoModelForCausalLM.from_pretrained(C.LM_ID, **{dtype_arg: dtype}).to(self.device).eval()
         self.tok = AutoTokenizer.from_pretrained(C.LM_ID)
         for m in (self.vision, self.lm):
             for p in m.parameters():
@@ -65,7 +68,10 @@ class SmolEdgeVLM:
         self.R = Restore(self.d_v, C.RESTORE_RANK).to(self.device, dtype).eval()
         self.connector = {}
         if weights_dir:
-            self.R.load_state_dict(load_state(os.path.join(weights_dir, self.WEIGHTS['restore']), self.device))
+            r_path = os.path.join(weights_dir, self.WEIGHTS['restore'])
+            if not os.path.exists(r_path):
+                raise FileNotFoundError('%s not found (pass weights_dir=None to start from an untrained R)' % r_path)
+            self.R.load_state_dict(load_state(r_path, self.device))
             for mode in ('smoledgevlm', 'full'):
                 path = os.path.join(weights_dir, self.WEIGHTS[mode])
                 if os.path.exists(path):
@@ -113,10 +119,18 @@ class SmolEdgeVLM:
         if self.device == 'cuda':
             torch.cuda.synchronize()
 
+    @property
+    def available_modes(self):
+        """Captioning modes with a loaded connector ('full' needs connector_full_encoder.pt; v2 has none)."""
+        return [m for m in ('full', 'smoledgevlm') if m in self.connector]
+
     @torch.no_grad()
     def caption(self, img, mode='smoledgevlm', max_new=C.MAX_NEW_TOKENS):
         """Greedy caption with a KV cache. Returns the caption, time to first token and total time in ms."""
-        conn = self.connector['full' if mode == 'full' else 'smoledgevlm']
+        key = 'full' if mode == 'full' else 'smoledgevlm'
+        if key not in self.connector:
+            raise ValueError("no '%s' connector loaded (available modes: %s)" % (key, ', '.join(self.available_modes) or 'none'))
+        conn = self.connector[key]
         px = self.pixels(img)
         self._sync()
         t0 = time.perf_counter()

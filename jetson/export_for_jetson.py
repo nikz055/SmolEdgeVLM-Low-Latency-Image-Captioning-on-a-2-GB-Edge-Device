@@ -11,9 +11,12 @@ import argparse, json, os, sys
 import numpy as np
 import torch
 
-VIS_ID, LM_ID = 'google/siglip-base-patch16-512', 'HuggingFaceTB/SmolLM2-135M'
-PROMPT = 'Describe this image in one sentence.'
-K_CUT, M_TOKENS, RADIUS = 3, 256, 3
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from smoledgevlm import config as C  # noqa: E402
+from smoledgevlm.model import vision_core  # noqa: E402
+
+VIS_ID, LM_ID, PROMPT = C.VISION_ID, C.LM_ID, C.PROMPT
+K_CUT, M_TOKENS, RADIUS = C.CUT_LAYER, C.NUM_TOKENS, C.RADIUS
 
 
 def torch_load(path):
@@ -29,14 +32,6 @@ def weight(folder, name):
         raise FileNotFoundError('%s not found in %s' % (name, folder))
     sd = torch_load(p)
     return sd.get('state_dict', sd)
-
-
-def vision_core(model):
-    """transformers 4.x keeps the encoder under .vision_model; 5.x puts it on the model itself."""
-    for cand in (getattr(model, 'vision_model', None), model):
-        if cand is not None and all(hasattr(cand, a) for a in ('embeddings', 'encoder', 'post_layernorm')):
-            return cand
-    raise AttributeError('could not find the SigLIP embeddings/encoder in this transformers version')
 
 
 EXPORT_DTYPE = np.float16          # float16 halves the size; the Jetson can still run it in float32 if needed
@@ -221,7 +216,6 @@ def main():
     print('wrote %s (%.0f MB, %d tensors)' % (wpath, os.path.getsize(wpath) / 2 ** 20, len(out)))
 
     if a.ref_images:
-        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
         from smoledgevlm.model import SmolEdgeVLM
         from PIL import Image
         fm = SmolEdgeVLM(a.weights_dir, device=a.ref_device)
